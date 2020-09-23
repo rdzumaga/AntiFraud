@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntiFraud.API.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace AntiFraud.API.Models
@@ -20,6 +21,8 @@ namespace AntiFraud.API.Models
 
         public List<Product> Products { get; private set; }
 
+        public PurchaseStatus Status { get; private set; }
+
         private Purchase()
         {
 
@@ -27,6 +30,7 @@ namespace AntiFraud.API.Models
 
         public Purchase(string email, decimal amount, string currency, Address address, List<Product> products)
         {
+            Status = PurchaseStatus.New;
             Date = DateTime.UtcNow;
             Email = email;
             Amount = amount;

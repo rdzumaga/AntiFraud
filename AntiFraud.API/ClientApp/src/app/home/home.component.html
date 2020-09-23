@@ -1,14 +1,120 @@
-<h1>Hello, world!</h1>
-<p>Welcome to your new single-page application, built with:</p>
-<ul>
-  <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>
-  <li><a href='https://angular.io/'>Angular</a> and <a href='http://www.typescriptlang.org/'>TypeScript</a> for client-side code</li>
-  <li><a href='http://getbootstrap.com/'>Bootstrap</a> for layout and styling</li>
-</ul>
-<p>To help you get started, we've also set up:</p>
-<ul>
-  <li><strong>Client-side navigation</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.</li>
-  <li><strong>Angular CLI integration</strong>. In development mode, there's no need to run <code>ng serve</code>. It runs in the background automatically, so your client-side resources are dynamically built on demand and the page refreshes when you modify any file.</li>
-  <li><strong>Efficient production builds</strong>. In production mode, development-time features are disabled, and your <code>dotnet publish</code> configuration automatically invokes <code>ng build</code> to produce minified, ahead-of-time compiled JavaScript files.</li>
-</ul>
-<p>The <code>ClientApp</code> subdirectory is a standard Angular CLI application. If you open a command prompt in that directory, you can run any <code>ng</code> command (e.g., <code>ng test</code>), or use <code>npm</code> to install extra packages into it.</p>
+<div class="alert alert-danger" role="alert" *ngIf="error">
+  Error encoutered. Try again later or contact administrator if problem persists.
+</div>
+
+<div class="row">
+  <div class="col-md-12 order-md-1">
+    <h4 class="mb-3">New purchase</h4>
+    <form class="form" [class.was-validated]="validated" [formGroup]="purchaseForm" (ngSubmit)="onSubmit()">
+
+      <div class="mb-3">
+        <label for="email">Email</label>
+        <input type="text" class="form-control"
+               [class.is-invalid]="purchaseForm.controls.email.invalid && (purchaseForm.controls.email.dirty || purchaseForm.controls.email.touched)"
+               formControlName="email" id="email" placeholder="you@example.com" required>
+        <div class="invalid-feedback">
+          Please enter a valid email address.
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="amount">Amount</label>
+          <input type="number" class="form-control"
+                 [class.is-invalid]="purchaseForm.controls.amount.invalid &&
+                   (purchaseForm.controls.amount.dirty || purchaseForm.controls.amount.touched)"
+                 formControlName="amount" id="amount" placeholder="" value="" required>
+          <div class="invalid-feedback">
+            Valid amount is required.
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="currency">Currency</label>
+          <input type="text" class="form-control"
+                 [class.is-invalid]="purchaseForm.controls.currency.invalid &&
+                   (purchaseForm.controls.currency.dirty || purchaseForm.controls.currency.touched)"
+                 formControlName="currency" id="currency" placeholder="" value="" required>
+          <div class="invalid-feedback">
+            Valid currency is required.
+          </div>
+        </div>
+      </div>
+      <ng-container formGroupName="address">
+        <div class="mb-3">
+          <label for="street">Street</label>
+          <input type="text" class="form-control"
+                 [class.is-invalid]="purchaseForm.controls.address.controls.street.invalid &&
+                   (purchaseForm.controls.address.controls.street.dirty || purchaseForm.controls.address.controls.street.touched)"
+                 formControlName="street" id="street" placeholder="1234 Main St" required>
+          <div class="invalid-feedback">
+            Please enter your street.
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-5 mb-3">
+            <label for="city">City</label>
+            <input type="text" class="form-control"
+                   [class.is-invalid]="purchaseForm.controls.address.controls.city.invalid &&
+                   (purchaseForm.controls.address.controls.city.dirty || purchaseForm.controls.address.controls.city.touched)"
+                   formControlName="city" id="city" placeholder="" required>
+            <div class="invalid-feedback">
+              Please enter your city.
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="country">Country</label>
+            <input type="text" class="form-control"
+                   [class.is-invalid]="purchaseForm.controls.address.controls.country.invalid &&
+                   (purchaseForm.controls.address.controls.country.dirty || purchaseForm.controls.address.controls.country.touched)"
+                   formControlName="country" id="country" placeholder="" required>
+            <div class="invalid-feedback">
+              Please enter your country.
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="zipcode">Zip</label>
+            <input type="text" class="form-control"
+                   [class.is-invalid]="purchaseForm.controls.address.controls.zipcode.invalid &&
+                   (purchaseForm.controls.address.controls.zipcode.dirty || purchaseForm.controls.address.controls.zipcode.touched)"
+                   formControlName="zipcode" id="zipcode" placeholder="" required>
+            <div class="invalid-feedback">
+              Zip code required.
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <hr class="mb-4">
+
+      <div class="row">
+        <div class="col-md-3">
+          <label class="col-form-label">Products</label>
+        </div>
+      </div>
+      <div class="form-group row" formArrayName="products">        
+        <div class="col-md-12">
+          <div class="input-group mb-3" *ngFor="let pd of purchaseForm.controls.products.controls; let i=index">
+            <ng-container [formGroupName]="i">
+              <input class="form-control mr-2" type="text" formControlName="name" id="name" placeholder="Name" required
+                     [class.is-invalid]="pd.controls.name.invalid &&
+                   (pd.controls.name.dirty || pd.controls.name.touched)">
+              <input class="form-control" type="number" formControlName="quantity" id="quantity" placeholder="Quantity" required
+                     [class.is-invalid]="pd.controls.quantity.invalid &&
+                   (pd.controls.quantity.dirty || pd.controls.quantity.touched)">
+              <span class="input-group-append">
+                <button type="button" class="btn btn-danger" (click)="removeProduct(i)">X</button>
+              </span>
+            </ng-container>
+          </div>
+          <button type="button" class="btn btn-success float-right"
+                  (click)="addProduct()">
+            Add product
+          </button>
+        </div>
+      </div>
+      <hr class="mb-4">
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+    </form>
+  </div>
+</div>
