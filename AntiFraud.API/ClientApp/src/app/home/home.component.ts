@@ -39,7 +39,7 @@ export class HomeComponent {
       .subscribe({
         next: (result) => {
           const id = result.id;
-          this.router.navigate(['/purchase', id]);
+          this.router.navigate(['/view', id]);
         },
         error: (_) => {
           this.error = true;

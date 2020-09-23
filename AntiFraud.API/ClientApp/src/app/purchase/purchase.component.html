@@ -4,7 +4,7 @@
   <hr class="my-4">
   <p>Current status of your purchase:</p>
   <div class="alert alert-primary" role="alert" *ngIf="(purchase$ | async)?.status === 0">
-    Yout purchase is awaiting to be processed.
+    Your purchase is awaiting to be processed.
   </div>  
   <div class="alert alert-success" role="alert" *ngIf="(purchase$ | async)?.status === 1">
     Your purchase was successfully processed!
