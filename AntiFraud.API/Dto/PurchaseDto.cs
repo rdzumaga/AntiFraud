@@ -1,4 +1,5 @@
-﻿using AntiFraud.API.Models;
+﻿using AntiFraud.API.Enums;
+using AntiFraud.API.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -25,6 +26,8 @@ namespace AntiFraud.API.Dto
         [JsonProperty("products")]
         public List<ProductDto> Products { get; set; }
 
+        public PurchaseStatus Status { get; set; }
+
         public Purchase ToDomainObject()
         {
             return new Purchase(Email, Amount, Currency, Address.ToDomainObject(), Products.Select(x => x.ToDomainObject()).ToList());
@@ -32,6 +35,8 @@ namespace AntiFraud.API.Dto
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            // todo add other validators?
+
             var validationResult = new List<ValidationResult>();
             if (string.IsNullOrWhiteSpace(Email)) validationResult.Add(new ValidationResult("Email cannot be empty", new[] { nameof(Email) }));
             else
@@ -39,6 +44,8 @@ namespace AntiFraud.API.Dto
                 var emailValid = new EmailAddressAttribute().IsValid(Email);
                 if (!emailValid) validationResult.Add(new ValidationResult("Email is invalid", new[] { nameof(Email) }));
             }
+
+            if (Amount < 0) validationResult.Add(new ValidationResult("Amount is invalid", new[] { nameof(Amount) }));
 
             return validationResult;
         }
@@ -54,6 +61,7 @@ namespace AntiFraud.API.Dto
                 Email = purchase.Email,
                 Amount = purchase.Amount,
                 Currency = purchase.Currency,
+                Status = purchase.Status,
                 Address = new AddressDto()
                 {
                     City = purchase.Address.City,

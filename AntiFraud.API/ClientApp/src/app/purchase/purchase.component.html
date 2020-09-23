@@ -1,0 +1,17 @@
+<div class="jumbotron">
+  <h1 class="display-4">Hello, {{(purchase$ | async)?.email}}!</h1>
+  <p class="lead">Your purchase was successfully submitted, check its status below. (save this URL for future reference!)</p>
+  <hr class="my-4">
+  <p>Current status of your purchase:</p>
+  <div class="alert alert-primary" role="alert" *ngIf="(purchase$ | async)?.status === 0">
+    Yout purchase is awaiting to be processed.
+  </div>  
+  <div class="alert alert-success" role="alert" *ngIf="(purchase$ | async)?.status === 1">
+    Your purchase was successfully processed!
+  </div>
+  <div class="alert alert-danger" role="alert" *ngIf="(purchase$ | async)?.status === 2 || (purchase$ | async)?.status === 3">
+    There were some issues with Your purchase, we will concat You soon.
+  </div>
+</div>
+
+<pre>{{purchase$ | async | json}}</pre>

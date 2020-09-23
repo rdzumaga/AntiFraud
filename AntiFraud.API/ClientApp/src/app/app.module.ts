@@ -7,15 +7,15 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
 import { PurchaseClient } from './api.client';
+import { PurchaseComponent } from './purchase/purchase.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent
+    PurchaseComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -23,7 +23,7 @@ import { PurchaseClient } from './api.client';
     ReactiveFormsModule ,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent }
+      { path: 'view/:id', component: PurchaseComponent }
     ])
   ],
   providers: [PurchaseClient],

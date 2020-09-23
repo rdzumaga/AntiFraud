@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { PurchaseClient } from '../api.client';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -27,7 +28,7 @@ export class HomeComponent {
     })])
   });
 
-  constructor(private fb: FormBuilder, private purchaseClient: PurchaseClient) { }
+  constructor(private fb: FormBuilder, private purchaseClient: PurchaseClient, private router: Router) { }
 
   onSubmit() {
     this.error = false;
@@ -38,6 +39,7 @@ export class HomeComponent {
       .subscribe({
         next: (result) => {
           const id = result.id;
+          this.router.navigate(['/purchase', id]);
         },
         error: (_) => {
           this.error = true;
