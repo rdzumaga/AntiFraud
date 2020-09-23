@@ -41,6 +41,9 @@ namespace AntiFraud.API
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
+
+            services.AddSwaggerDocument();
+
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
@@ -69,6 +72,9 @@ namespace AntiFraud.API
             }
 
             app.UseRouting();
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {
