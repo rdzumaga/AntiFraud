@@ -8,6 +8,8 @@ namespace AntiFraud.API.Dto
 {
     public class PurchaseDto : IValidatableObject
     {
+        public string Id { get; set; }
+
         [JsonProperty("email")]
         public string Email { get; set; }
 
@@ -48,6 +50,7 @@ namespace AntiFraud.API.Dto
         {
             var dto = new PurchaseDto()
             {
+                Id = purchase.Id,
                 Email = purchase.Email,
                 Amount = purchase.Amount,
                 Currency = purchase.Currency,

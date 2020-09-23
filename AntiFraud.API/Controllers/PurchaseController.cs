@@ -44,7 +44,7 @@ namespace AntiFraud.API.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ModelStateDictionary))]
-        public async Task<ActionResult<Product>> CreatePurchaseAsync(PurchaseDto dto)
+        public async Task<ActionResult<PurchaseDto>> CreatePurchaseAsync(PurchaseDto dto)
         {
             try
             {

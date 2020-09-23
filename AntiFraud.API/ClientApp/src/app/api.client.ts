@@ -16,7 +16,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IPurchaseClient {
     getPurchase(id: string | null): Observable<PurchaseDto>;
-    createPurchase(dto: PurchaseDto): Observable<Product>;
+    createPurchase(dto: PurchaseDto): Observable<PurchaseDto>;
 }
 
 @Injectable()
@@ -86,7 +86,7 @@ export class PurchaseClient implements IPurchaseClient {
         return _observableOf<PurchaseDto>(<any>null);
     }
 
-    createPurchase(dto: PurchaseDto): Observable<Product> {
+    createPurchase(dto: PurchaseDto): Observable<PurchaseDto> {
         let url_ = this.baseUrl + "/Purchase";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -109,14 +109,14 @@ export class PurchaseClient implements IPurchaseClient {
                 try {
                     return this.processCreatePurchase(<any>response_);
                 } catch (e) {
-                    return <Observable<Product>><any>_observableThrow(e);
+                    return <Observable<PurchaseDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<Product>><any>_observableThrow(response_);
+                return <Observable<PurchaseDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreatePurchase(response: HttpResponseBase): Observable<Product> {
+    protected processCreatePurchase(response: HttpResponseBase): Observable<PurchaseDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -126,7 +126,7 @@ export class PurchaseClient implements IPurchaseClient {
         if (status === 201) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result201: any = null;
-            result201 = _responseText === "" ? null : <Product>JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = _responseText === "" ? null : <PurchaseDto>JSON.parse(_responseText, this.jsonParseReviver);
             return _observableOf(result201);
             }));
         } else if (status === 400) {
@@ -140,11 +140,12 @@ export class PurchaseClient implements IPurchaseClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<Product>(<any>null);
+        return _observableOf<PurchaseDto>(<any>null);
     }
 }
 
 export interface PurchaseDto {
+    id?: string | undefined;
     email?: string | undefined;
     amount: number;
     currency?: string | undefined;
@@ -171,11 +172,6 @@ export interface ProblemDetails {
     detail?: string | undefined;
     instance?: string | undefined;
     extensions?: { [key: string]: any; } | undefined;
-}
-
-export interface Product {
-    name?: string | undefined;
-    quantity: number;
 }
 
 export interface ModelStateDictionary {

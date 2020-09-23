@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { PurchaseClient } from '../api.client';
 
 @Component({
   selector: 'app-home',
@@ -8,6 +9,7 @@ import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@ang
 export class HomeComponent {
 
   validated = false;
+  error = false;
 
   purchaseForm = this.fb.group({
     email: ['', [Validators.minLength(1), Validators.email, Validators.required]],
@@ -25,11 +27,22 @@ export class HomeComponent {
     })])
   });
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private purchaseClient: PurchaseClient) { }
 
   onSubmit() {
+    this.error = false;
     this.validated = true;
     if (!this.purchaseForm.valid) return;
+
+    this.purchaseClient.createPurchase(this.purchaseForm.value)
+      .subscribe({
+        next: (result) => {
+          const id = result.id;
+        },
+        error: (_) => {
+          this.error = true;
+        }
+      });
   }
 
 

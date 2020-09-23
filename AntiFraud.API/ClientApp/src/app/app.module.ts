@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
+import { PurchaseClient } from './api.client';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { CounterComponent } from './counter/counter.component';
       { path: 'counter', component: CounterComponent }
     ])
   ],
-  providers: [],
+  providers: [PurchaseClient],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
