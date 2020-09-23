@@ -31,6 +31,12 @@ namespace AntiFraud.API.Models
             modelBuilder.Entity<Purchase>()
                 .Property(e => e.Amount)
                 .HasConversion<double>();
+
+            modelBuilder.Entity<Purchase>().OwnsOne(p => p.Address);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(b => b.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }

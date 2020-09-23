@@ -2,10 +2,12 @@ using AntiFraud.API.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Data.Common;
 
 namespace AntiFraud.API
 {
@@ -18,10 +20,24 @@ namespace AntiFraud.API
 
         public IConfiguration Configuration { get; }
 
+        private DbConnection CreateInMemoryDatabase()
+        {
+            var connection = new SqliteConnection("Data Source=InMemoryDb;Mode=Memory;Cache=Shared");
+
+            connection.Open();
+
+            return connection;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+#if USE_IN_MEMORY_SQLITE
+            services.AddDbContext<DataContext>(options => options.UseSqlite(CreateInMemoryDatabase()));
+#else
             services.AddDbContext<DataContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+#endif
+
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory

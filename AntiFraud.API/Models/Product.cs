@@ -10,5 +10,11 @@
         {
 
         }
+
+        public Product(string name, int quantity)
+        {
+            Name = name;
+            Quantity = quantity;
+        }
     }
 }
