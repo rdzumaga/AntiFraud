@@ -64,6 +64,9 @@ namespace AntiFraud.API
                 app.UseHsts();
             }
 
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
@@ -72,9 +75,6 @@ namespace AntiFraud.API
             }
 
             app.UseRouting();
-
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {
