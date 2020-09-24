@@ -1,4 +1,5 @@
 ﻿using AntiFraud.API.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace AntiFraud.API.FraudCheckers
@@ -18,8 +19,8 @@ namespace AntiFraud.API.FraudCheckers
 
             if (purchase.Amount <= 1000) return false;
 
-            var userPurchasesCount = _dataContext.Purchases.Count(x => x.Email.Equals(purchase.Email, System.StringComparison.OrdinalIgnoreCase));
-            if (userPurchasesCount > 0) return false;
+            var userPurchases = _dataContext.Purchases.Count(x => EF.Functions.Like(x.Email, $"{purchase.Email}") && x.Status == Enums.PurchaseStatus.Valid);
+            if (userPurchases > 0) return false;
 
             return true;
         }

@@ -1,4 +1,5 @@
 using AntiFraud.API.FraudCheckers;
+using AntiFraud.API.Jobs;
 using AntiFraud.API.Models;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -102,10 +103,10 @@ namespace AntiFraud.API
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapHangfireDashboard();
             });
-
-            RecurringJob.AddOrUpdate(
-                () => System.Console.WriteLine("Recurring!"),
-                Cron.Minutely);
+                        
+            RecurringJob.AddOrUpdate<PurchaseCheckJob>(
+                (x) => x.CheckNewPurchasesAsync(),
+                Configuration.GetValue<string>("CheckPurchasesJobCron"));
 
             app.UseSpa(spa =>
             {

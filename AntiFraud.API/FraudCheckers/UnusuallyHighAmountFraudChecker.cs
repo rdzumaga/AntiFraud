@@ -13,9 +13,9 @@ namespace AntiFraud.API.FraudCheckers
         }
         public bool IsFraud(Purchase purchase)
         {
-            var avgOrderAmount = _dataContext.Purchases.Average(x => x.Amount);
+            var avgOrderAmount = _dataContext.Purchases.Where(x => x.Status == Enums.PurchaseStatus.Valid).Average(x => x.Amount);
 
-            if (purchase.Amount * 5 > avgOrderAmount) return true;
+            if (purchase.Amount > avgOrderAmount * 5) return true;
 
             return false;
         }

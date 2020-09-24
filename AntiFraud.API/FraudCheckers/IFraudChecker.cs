@@ -2,7 +2,7 @@
 
 namespace AntiFraud.API.FraudCheckers
 {
-    interface IFraudChecker
+    public interface IFraudChecker
     {
         bool IsFraud(Purchase purchase);
     }

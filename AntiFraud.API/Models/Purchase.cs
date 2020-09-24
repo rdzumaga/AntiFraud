@@ -8,7 +8,7 @@ namespace AntiFraud.API.Models
     {
         public string Id { get; private set; }
 
-        // SQLite does not support DateTimeOffset
+        // SQLite EFCore does not support DateTimeOffset
         public DateTime Date { get; set; }
 
         public string Email { get; private set; }
@@ -26,6 +26,16 @@ namespace AntiFraud.API.Models
         private Purchase()
         {
 
+        }
+
+        public void SetValid()
+        {
+            Status = PurchaseStatus.Valid;
+        }
+
+        public void SetInvalid()
+        {
+            Status = PurchaseStatus.Invalid;
         }
 
         public Purchase(string email, decimal amount, string currency, Address address, List<Product> products)
