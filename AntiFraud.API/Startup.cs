@@ -1,6 +1,7 @@
 using AntiFraud.API.FraudCheckers;
 using AntiFraud.API.Jobs;
 using AntiFraud.API.Models;
+using AntiFraud.API.Options;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.Storage.SQLite;
@@ -53,6 +54,9 @@ namespace AntiFraud.API
                 configuration.UseSQLiteStorage(Configuration.GetConnectionString("Hangfire"));
 #endif
             });
+
+            services.Configure<SMTPOptions>(Configuration.GetSection(
+                                        "SMTP"));
 
             services.AddTransient<IFraudChecker, NigerianPrinceFraudChecker>();
             services.AddTransient<IFraudChecker, UnusuallyHighAmountFraudChecker>();
