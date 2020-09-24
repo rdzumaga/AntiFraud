@@ -9,8 +9,8 @@
   <div class="alert alert-success" role="alert" *ngIf="(purchase$ | async)?.status === 1">
     Your purchase was successfully processed!
   </div>
-  <div class="alert alert-danger" role="alert" *ngIf="(purchase$ | async)?.status === 2 || (purchase$ | async)?.status === 3">
-    There were some issues with Your purchase, we will concat You soon.
+  <div class="alert alert-danger" role="alert" *ngIf="(purchase$ | async)?.status === 2">
+    There were some issues with Your purchase, we will contact You soon.
   </div>
 </div>
 

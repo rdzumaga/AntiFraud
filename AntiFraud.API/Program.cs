@@ -37,7 +37,12 @@ namespace AntiFraud.API
 
                 var json = File.ReadAllText(filename);
                 var purchases = JsonConvert.DeserializeObject<List<PurchaseDto>>(json);
-                dataContext.Purchases.AddRange(purchases.Select(x => x.ToDomainObject()));
+                var domainObjects = purchases.Select(x => x.ToDomainObject()).ToList();
+                foreach (var domainObject in domainObjects)
+                {
+                    domainObject.SetValid();
+                }
+                dataContext.Purchases.AddRange(domainObjects);
                 dataContext.SaveChanges();
             }
             catch (System.Exception ex)

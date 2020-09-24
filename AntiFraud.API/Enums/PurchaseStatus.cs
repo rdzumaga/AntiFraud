@@ -4,7 +4,6 @@
     {
         New,
         Valid,
-        Invalid,
-        Error
+        Invalid
     }
 }
