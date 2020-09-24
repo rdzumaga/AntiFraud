@@ -1,3 +1,4 @@
+using AntiFraud.API.FraudCheckers;
 using AntiFraud.API.Models;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -52,6 +53,9 @@ namespace AntiFraud.API
 #endif
             });
 
+            services.AddTransient<IFraudChecker, NigerianPrinceFraudChecker>();
+            services.AddTransient<IFraudChecker, UnusuallyHighAmountFraudChecker>();
+
             services.AddHangfireServer();
 
             services.AddControllersWithViews();
@@ -98,6 +102,10 @@ namespace AntiFraud.API
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapHangfireDashboard();
             });
+
+            RecurringJob.AddOrUpdate(
+                () => System.Console.WriteLine("Recurring!"),
+                Cron.Minutely);
 
             app.UseSpa(spa =>
             {
