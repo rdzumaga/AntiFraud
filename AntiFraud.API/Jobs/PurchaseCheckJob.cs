@@ -53,7 +53,10 @@ namespace AntiFraud.API.Jobs
                 }
                 await _dataContext.SaveChangesAsync();
 
+                // notify client about his purchase
                 BackgroundJob.Enqueue<EmailHelper>(x => x.SendPurchaseProcessedEmail(purchase.Id));
+
+                // if purchase is invalid notify support
                 if (purchase.Status != Enums.PurchaseStatus.Valid) BackgroundJob.Enqueue<EmailHelper>(x => x.SendPurchaseNeedsAttentionEmail(purchase.Id));
             }
             catch (Exception ex)
