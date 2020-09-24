@@ -14,6 +14,9 @@ Application uses standard appsettings.json. Important settings are: connection s
 ### Note on Email notificiations
 App is setup to notifiy users/support about purchases (and frauds) via email, but no actual email implementation is done. In order to monitor notifications, every would-be email is insted printed as a short Info on default logger (console) (see EmailHelper.cs).
 
+### Running app 
+App was bootstraped from VS2019 built-in .net core + angular template so if debugging from VS2019 'npm install' and 'ng serve' will be run automatically on app start (which delays the start a bit)
+
 ### Anti fraud
 Currently two anti fraud filters are set.
 * NigerianPrince: this filter detects fraud if:
