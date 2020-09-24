@@ -16,6 +16,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IPurchaseClient {
     getPurchase(id: string | null): Observable<PurchaseDto>;
+    getPurchases(): Observable<PurchaseDto[]>;
     createPurchase(dto: PurchaseDto): Observable<PurchaseDto>;
 }
 
@@ -86,6 +87,53 @@ export class PurchaseClient implements IPurchaseClient {
         return _observableOf<PurchaseDto>(<any>null);
     }
 
+    getPurchases(): Observable<PurchaseDto[]> {
+        let url_ = this.baseUrl + "/Purchase";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPurchases(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPurchases(<any>response_);
+                } catch (e) {
+                    return <Observable<PurchaseDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PurchaseDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPurchases(response: HttpResponseBase): Observable<PurchaseDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <PurchaseDto[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PurchaseDto[]>(<any>null);
+    }
+
     createPurchase(dto: PurchaseDto): Observable<PurchaseDto> {
         let url_ = this.baseUrl + "/Purchase";
         url_ = url_.replace(/[?&]$/, "");
@@ -151,6 +199,7 @@ export interface PurchaseDto {
     currency?: string | undefined;
     address?: AddressDto | undefined;
     products?: ProductDto[] | undefined;
+    status: PurchaseStatus;
 }
 
 export interface AddressDto {
@@ -164,6 +213,8 @@ export interface ProductDto {
     name?: string | undefined;
     quantity: number;
 }
+
+export type PurchaseStatus = 0 | 1 | 2 | 3;
 
 export interface ProblemDetails {
     type?: string | undefined;
