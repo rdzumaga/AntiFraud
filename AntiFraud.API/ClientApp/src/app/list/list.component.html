@@ -1,0 +1,5 @@
+<ol>
+  <li *ngFor="let purchase of (purchases$ | async)">
+    <a class="nav-link text-dark" [routerLink]="['/view/', purchase.id]">{{purchase.id}} {{purchase.email}}</a>
+  </li>
+</ol>

@@ -3,7 +3,10 @@ using AntiFraud.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
@@ -30,6 +33,23 @@ namespace AntiFraud.API.Controllers
                 var purchase = await _dataContext.Purchases.FindAsync(id);
                 if (purchase == null) return NotFound();
                 return purchase.ToDto();
+            }
+            catch (Exception ex)
+            {
+                // todo add logging
+                throw;
+            }
+
+        }
+
+        [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<PurchaseDto>>> GetPurchasesAsync()
+        {
+            try
+            {
+                var purchases = await _dataContext.Purchases.OrderByDescending(x => x.Date).ToListAsync();
+                return purchases.Select(x => x.ToDto()).ToList();
             }
             catch (Exception ex)
             {
