@@ -214,7 +214,7 @@ export interface ProductDto {
     quantity: number;
 }
 
-export type PurchaseStatus = 0 | 1 | 2 | 3;
+export type PurchaseStatus = 0 | 1 | 2;
 
 export interface ProblemDetails {
     type?: string | undefined;

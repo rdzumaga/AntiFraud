@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,12 @@ namespace AntiFraud.API.Controllers
     public class PurchaseController : ControllerBase
     {
         private readonly DataContext _dataContext;
+        private readonly ILogger<PurchaseController> _logger;
 
-        public PurchaseController(DataContext dataContext)
+        public PurchaseController(DataContext dataContext, ILogger<PurchaseController> logger)
         {
             _dataContext = dataContext;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]
@@ -36,7 +39,7 @@ namespace AntiFraud.API.Controllers
             }
             catch (Exception ex)
             {
-                // todo add logging
+                _logger.LogError(ex, $"Error while getting purchase");
                 throw;
             }
 
@@ -53,7 +56,7 @@ namespace AntiFraud.API.Controllers
             }
             catch (Exception ex)
             {
-                // todo add logging
+                _logger.LogError(ex, $"Error while getting purchase list");
                 throw;
             }
 
@@ -82,7 +85,7 @@ namespace AntiFraud.API.Controllers
             }
             catch (Exception ex)
             {
-                // todo add logging
+                _logger.LogError(ex, $"Error while creating purchase");
                 throw;
             }
         }

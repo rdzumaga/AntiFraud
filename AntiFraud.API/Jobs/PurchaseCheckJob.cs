@@ -1,7 +1,9 @@
 ﻿using AntiFraud.API.FraudCheckers;
+using AntiFraud.API.Helpers;
 using AntiFraud.API.Models;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,11 +16,13 @@ namespace AntiFraud.API.Jobs
     {
         private readonly DataContext _dataContext;
         private readonly IEnumerable<IFraudChecker> _fraudCheckers;
+        private readonly ILogger<PurchaseCheckJob> _logger;
 
-        public PurchaseCheckJob(DataContext dataContext, IEnumerable<IFraudChecker> fraudCheckers)
+        public PurchaseCheckJob(DataContext dataContext, IEnumerable<IFraudChecker> fraudCheckers, ILogger<PurchaseCheckJob> logger)
         {
             _dataContext = dataContext;
             _fraudCheckers = fraudCheckers;
+            _logger = logger;
         }
 
         public async Task CheckNewPurchasesAsync()
@@ -48,11 +52,16 @@ namespace AntiFraud.API.Jobs
                     }
                 }
                 await _dataContext.SaveChangesAsync();
+
+                BackgroundJob.Enqueue<EmailHelper>(x => x.SendPurchaseProcessedEmail(purchase.Id));
+                if (purchase.Status != Enums.PurchaseStatus.Valid) BackgroundJob.Enqueue<EmailHelper>(x => x.SendPurchaseNeedsAttentionEmail(purchase.Id));
             }
             catch (Exception ex)
             {
+                BackgroundJob.Enqueue<EmailHelper>(x => x.SendErrorEmail(purchase.Id));
+                _logger.LogError(ex, $"Error processing purchase {purchase.Id}");
                 throw;
-                // todo log error
+                
             }            
         }
     }
