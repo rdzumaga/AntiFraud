@@ -1,4 +1,7 @@
 using AntiFraud.API.Models;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -38,6 +41,18 @@ namespace AntiFraud.API
             services.AddDbContext<DataContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 #endif
 
+            services.AddHangfire(configuration => {
+                configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
+                configuration.UseSimpleAssemblyNameTypeSerializer();
+                configuration.UseRecommendedSerializerSettings();
+#if USE_IN_MEMORY_SQLITE
+                configuration.UseMemoryStorage();
+#else
+                configuration.UseSQLiteStorage(Configuration.GetConnectionString("Hangfire"));
+#endif
+            });
+
+            services.AddHangfireServer();
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
@@ -81,6 +96,7 @@ namespace AntiFraud.API
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHangfireDashboard();
             });
 
             app.UseSpa(spa =>
